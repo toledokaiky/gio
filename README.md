@@ -115,7 +115,7 @@ Cada seção detalha:
 ### ✅ Decisões & Otimizações
 
 - Pausa de palavras-chave **ineficientes** (baixa conversão, CTR, alto CPA) [0 = Pausar, 1 = Manter].
-> Exemplo de entrada JSON
+Exemplo de entrada JSON
 ˋˋˋ
 [
   {
@@ -162,7 +162,7 @@ Cada seção detalha:
   }
 ]
 ˋˋˋ
-> Exemplo de saida JSON
+Exemplo de saida JSON
 ˋˋˋ
 [
   {"id": "kw_001", "acao": 1},
