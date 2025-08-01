@@ -118,7 +118,8 @@ Cada seção detalha:
 
 Exemplo de entrada JSON
 
-ˋˋˋ[
+```
+[
   {
     "id": "kw_001",
     "impressions_7d": 320,
@@ -161,16 +162,17 @@ Exemplo de entrada JSON
     "ratio_roas_7d_adgroup": 0.70,
     "pct_rank_roas_7d_adgroup": 0.20
   }
-]ˋˋˋ
+]
+```
 
 Exemplo de saida JSON
 
-ˋˋˋ
+```
 [
   {"id": "kw_001", "acao": 1},
   {"id": "kw_002", "acao": 0}
 ]
-ˋˋˋ
+```
 - Redução/aumento de lances baseado em performance.
 - Inclusão de **negativas** via termos de busca de baixo resultado.
 - Inclusão de novas palavras positivas via tendências e oportunidades.
