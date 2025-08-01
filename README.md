@@ -115,6 +115,7 @@ Cada seção detalha:
 ### ✅ Decisões & Otimizações
 
 - Pausa de palavras-chave **ineficientes** (baixa conversão, CTR, alto CPA) [0 = Pausar, 1 = Manter].
+
 Exemplo de entrada JSON
 ˋˋˋ
 [
