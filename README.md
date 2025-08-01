@@ -117,8 +117,8 @@ Cada seção detalha:
 - Pausa de palavras-chave **ineficientes** (baixa conversão, CTR, alto CPA) [0 = Pausar, 1 = Manter].
 
 Exemplo de entrada JSON
-ˋˋˋ
-[
+
+ˋˋˋ[
   {
     "id": "kw_001",
     "impressions_7d": 320,
@@ -161,9 +161,10 @@ Exemplo de entrada JSON
     "ratio_roas_7d_adgroup": 0.70,
     "pct_rank_roas_7d_adgroup": 0.20
   }
-]
-ˋˋˋ
+]ˋˋˋ
+
 Exemplo de saida JSON
+
 ˋˋˋ
 [
   {"id": "kw_001", "acao": 1},
