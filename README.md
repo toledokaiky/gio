@@ -27,13 +27,14 @@ Cada seção detalha:
 
 ### ✅ Decisões & Otimizações
 
-- Ajuste automático do **orçamento diário** conforme performance.
+- Ajuste automático do **orçamento diário** conforme performance, rebalanceando o orçamento de todas as campanhas.
 - Troca de **estratégia de lances**: Maximizar Conversões ↔ CPA alvo ↔ ROAS alvo.
+- Ajuste de CPA, ROAS desejado ou CPC desejado quando pertinente.
 - **Ajuste de geolocalização** e idioma conforme dados de conversão.
 - Pausa de campanhas de **baixo desempenho** ou alto custo sem retorno.
-- **Criação de novas campanhas** para clusters de público ou palavras-chave ainda não explorados.
+- **Criação de novas campanhas** para clusters de público ou palavras-chave ainda não explorados, quando fizer sentido e o orçamento for pertinente.
 - Otimização dos **horários e datas de veiculação**.
-- Redistribuição de orçamento para maximizar ROI.
+- Redistribuição de orçamento para maximizar ROI ou Conversões.
 
 ### 📊 Métricas Analisadas
 
@@ -113,7 +114,61 @@ Cada seção detalha:
 
 ### ✅ Decisões & Otimizações
 
-- Pausa de palavras-chave **ineficientes** (baixa conversão, CTR, alto CPA).
+- Pausa de palavras-chave **ineficientes** (baixa conversão, CTR, alto CPA) [0 = Pausar, 1 = Manter].
+> Exemplo de entrada JSON
+ˋˋˋ
+[
+  {
+    "id": "kw_001",
+    "impressions_7d": 320,
+    "clicks_7d": 45,
+    "conversions_7d": 2,
+    "diff_ctr_7d_adgroup": 0.02,
+    "ratio_ctr_7d_adgroup": 1.05,
+    "pct_rank_ctr_7d_adgroup": 0.55,
+    "diff_cpc_7d_adgroup": -0.08,
+    "ratio_cpc_7d_adgroup": 0.95,
+    "pct_rank_cpc_7d_adgroup": 0.50,
+    "diff_conversion_rate_7d_adgroup": 0.01,
+    "ratio_conversion_rate_7d_adgroup": 1.10,
+    "pct_rank_conversion_rate_7d_adgroup": 0.60,
+    "diff_cpa_7d_adgroup": -2.0,
+    "ratio_cpa_7d_adgroup": 0.85,
+    "pct_rank_cpa_7d_adgroup": 0.45,
+    "diff_roas_7d_adgroup": 0.3,
+    "ratio_roas_7d_adgroup": 1.20,
+    "pct_rank_roas_7d_adgroup": 0.58
+  },
+  {
+    "id": "kw_002",
+    "impressions_7d": 150,
+    "clicks_7d": 12,
+    "conversions_7d": 0,
+    "diff_ctr_7d_adgroup": -0.03,
+    "ratio_ctr_7d_adgroup": 0.60,
+    "pct_rank_ctr_7d_adgroup": 0.25,
+    "diff_cpc_7d_adgroup": 0.05,
+    "ratio_cpc_7d_adgroup": 1.10,
+    "pct_rank_cpc_7d_adgroup": 0.75,
+    "diff_conversion_rate_7d_adgroup": -0.04,
+    "ratio_conversion_rate_7d_adgroup": 0.65,
+    "pct_rank_conversion_rate_7d_adgroup": 0.30,
+    "diff_cpa_7d_adgroup": 4.0,
+    "ratio_cpa_7d_adgroup": 1.50,
+    "pct_rank_cpa_7d_adgroup": 0.80,
+    "diff_roas_7d_adgroup": -0.5,
+    "ratio_roas_7d_adgroup": 0.70,
+    "pct_rank_roas_7d_adgroup": 0.20
+  }
+]
+ˋˋˋ
+> Exemplo de saida JSON
+ˋˋˋ
+[
+  {"id": "kw_001", "acao": 1},
+  {"id": "kw_002", "acao": 0}
+]
+ˋˋˋ
 - Redução/aumento de lances baseado em performance.
 - Inclusão de **negativas** via termos de busca de baixo resultado.
 - Inclusão de novas palavras positivas via tendências e oportunidades.
