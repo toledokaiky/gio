@@ -1,0 +1,72 @@
+{
+  "action_id": "bidding.target_adjust",
+  "title": "Ajustar alvo de lance (tCPA/tROAS)",
+  "description": "Ajusta o CPA alvo ou o ROAS alvo da campanha, mantendo a estratégia atual.",
+  "entity_types": ["campaign"],
+  "params": {
+    "mode": {
+      "type": "enum", "required": true,
+      "enum": ["relative", "absolute"],
+      "description": "Como aplicar o ajuste de alvo (padrão: relative)."
+    },
+    "delta_pct": {
+      "type": "number", "required": false,
+      "description": "Variação percentual (ex.: -0.10 = -10%). Usado quando mode=relative.",
+      "min": -0.15, "max": 0.15 
+    },
+    "target_override": {
+      "type": "number", "required": false,
+      "description": "Novo alvo absoluto (moeda para tCPA; multiplicador para tROAS, ex.: 3.0 = 300%). Usado quando mode=absolute."
+    }
+  },
+  "eligibility": [
+    "clicks_7d >= 100",
+    "campaign_status == 'ENABLED'",
+    "current_strategy in ['TARGET_CPA','TARGET_ROAS']"
+  ],
+  "preconditions": [
+    "not recent_change('bidding', 3)",
+    "not recent_change('budget', 1)"
+  ],
+  "guardrails": [
+  "if params.mode == 'relative' then params.delta_pct is not null",
+    "if params.mode == 'absolute' then params.target_override is not null",
+
+    "if current_strategy == 'TARGET_CPA' then conversions_30d >= 15",
+    "if current_strategy == 'TARGET_CPA' then cost_14d >= 5 * current_target_cpa", 
+    "if current_strategy == 'TARGET_CPA' then daily_budget >= 2 * NEW_TARGET_CPA",
+    "if current_strategy == 'TARGET_CPA' and params.mode == 'absolute' then params.target_override > 0",
+
+
+    "if current_strategy == 'TARGET_ROAS' then (conversions_30d >= 30 and conversion_value_30d > 0)",
+    "if current_strategy == 'TARGET_ROAS' and params.mode == 'absolute' then params.target_override > 0",
+
+
+    "if current_strategy == 'TARGET_CPA'  then NEW_TARGET_CPA  in [p25_CPA_30d, p75_CPA_30d]",
+    "if current_strategy == 'TARGET_ROAS' then NEW_TARGET_ROAS in [p25_ROAS_30d*0.9, p75_ROAS_30d*1.1]"
+  ],
+  "rollback": {
+    "capture_fields": ["target_cpa", "target_roas"],
+    "ttl_days": 14
+  },
+  "kpi_target": "cpa_down",
+  "reversibility": 0.7,
+  "effort": 0.3,
+  "risk": 0.3,
+  "api_mapping": {
+    "resource": "Campaign",
+    "operation": "mutate",
+    "fields": ["target_cpa_micros", "target_roas"]
+  },
+  "cooldown_days": 3,
+  "conflicts_with": ["bidding.strategy_change"],
+  "can_batch": true,
+  "eval": {
+    "window_days": 7,
+    "lag_days": 3,
+    "metrics": ["delta_roas", "delta_cpa"],
+    "success_rules": ["delta_roas >= 0.05", "or", "delta_cpa <= -0.08"],
+    "min_sample": "clicks_7d >= 100"
+  },
+  "version": "1.0.0"
+}
