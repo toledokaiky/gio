@@ -26,7 +26,8 @@
   ],
   "preconditions": [
     "not recent_change('bidding', 3)",
-    "not recent_change('budget', 1)"
+    "not recent_change('budget', 1)",
+    "changes_to_target_last_14d < 4"
   ],
   "guardrails": [
     "if params.mode == 'relative' then params.delta_pct is not null",
