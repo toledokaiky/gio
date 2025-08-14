@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GIO Action",
+  "type": "object",
+  "required": ["action_id","title","entity_types","params","preconditions","guardrails","rollback","kpi_target","reversibility","effort","risk","api_mapping","cooldown_days","conflicts_with","version"],
+  "properties": {
+    "action_id": {"type":"string"},                    // ex: "budget.increase"
+    "title": {"type":"string"},
+    "description": {"type":"string"},
+    "entity_types": {"type":"array","items":{"enum":["account","campaign","ad_group","keyword"]}},
+    "params": {                                        // contrato de entrada
+      "type":"object",
+      "additionalProperties": {
+        "type":"object",
+        "required":["type","required"],
+        "properties":{
+          "type":{"enum":["number","integer","string","boolean","enum"]},
+          "required":{"type":"boolean"},
+          "min":{"type":["number","integer"]},
+          "max":{"type":["number","integer"]},
+          "enum":{"type":"array","items":{"type":["string","number"]}},
+          "default":{},
+          "description":{"type":"string"}
+        }
+      }
+    },
+    "preconditions": { "type":"array","items":{"type":"string"} },   // expressões sobre features_daily (ex: clicks_7d >= 100)
+    "guardrails":    { "type":"array","items":{"type":"string"} },   // limites duros (ex: increase_pct <= 0.15)
+    "rollback": {
+      "type":"object",
+      "required":["capture_fields","ttl_days"],
+      "properties":{
+        "capture_fields":{"type":"array","items":{"type":"string"}}, // o que salvar ANTES de alterar
+        "ttl_days":{"type":"integer"}                                // quanto tempo manter a opção de desfazer
+      }
+    },
+    "kpi_target": { "type":"string" },                               // "roas_up", "cpa_down", "conv_rate_up", etc.
+    "reversibility": {"type":"number","minimum":0,"maximum":1},      // 0..1 (quão fácil voltar atrás)
+    "effort": {"type":"number","minimum":0,"maximum":1},             // 0..1 (custo operacional)
+    "risk": {"type":"number","minimum":0,"maximum":1},               // 0..1 (potencial de dano)
+    "api_mapping": {                                                 // ponte p/ Google Ads API
+      "type":"object",
+      "required":["resource","operation","fields"],
+      "properties":{
+        "resource":{"type":"string"},                                 // ex: "Campaign", "CampaignBudget", "AdGroupCriterion"
+        "operation":{"enum":["mutate","create","pause","enable"]},
+        "fields":{"type":"array","items":{"type":"string"}}           // campos que serão alterados
+      }
+    },
+    "cooldown_days": {"type":"integer"},                              // não repetir a mesma ação nesse período
+    "conflicts_with": {"type":"array","items":{"type":"string"}},     // ações incompatíveis
+    "can_batch": {"type":"boolean","default":true},
+    "version": {"type":"string"}
+  }
+}
