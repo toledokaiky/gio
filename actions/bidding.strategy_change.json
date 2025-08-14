@@ -1,0 +1,70 @@
+{
+  "action_id": "bidding.strategy_change",
+  "title": "Trocar estratégia de lances",
+  "description": "Altera a estratégia de lance da campanha (Max Clicks/Conv/Conv Value, tCPA, tROAS).",
+  "entity_types": ["campaign"],
+  "params": {
+    "new_strategy": {
+      "type": "enum",
+      "required": true,
+      "enum": ["MAX_CLICKS", "MAX_CONVERSIONS", "MAX_CONV_VALUE", "TARGET_CPA", "TARGET_ROAS"],
+      "description": "Nova estratégia de lance."
+    },
+    "target_cpa": {
+      "type": "number",
+      "required": false,
+      "description": "Obrigatório se TARGET_CPA (na moeda da conta)."
+    },
+    "target_roas": {
+      "type": "number",
+      "required": false,
+      "description": "Obrigatório se TARGET_ROAS (ex.: 3.0 = 300%)."
+    }
+  },
+  "eligibility": [
+    "clicks_7d >= 50", "campaign_status == 'ENABLED'"
+  ],
+  "preconditions": [
+    "not recent_change('bidding', 7)",
+    "not recent_change('budget', 1)"
+  ],
+  "guardrails": [
+  "supports_strategy(params.new_strategy)",
+
+  "if params.new_strategy == 'TARGET_CPA'  then params.target_cpa is not null",
+  "if params.new_strategy == 'TARGET_CPA'  then conversions_30d >= 15",
+  "if params.new_strategy == 'TARGET_CPA'  then daily_budget >= 2 * params.target_cpa",
+  "if params.new_strategy == 'TARGET_CPA'  then cost_14d >= 5 * params.target_cpa",
+
+  "if params.new_strategy == 'TARGET_ROAS' then params.target_roas is not null",
+  "if params.new_strategy == 'TARGET_ROAS' then (conversions_30d >= 30 and conversion_value_30d > 0)",
+
+  "if params.new_strategy in ['MAX_CLICKS','MAX_CONVERSIONS','MAX_CONV_VALUE'] then (params.target_cpa is null and params.target_roas is null)",
+
+  "if current_strategy == params.new_strategy then block('use bidding.target_adjust instead')"
+],
+  "rollback": {
+    "capture_fields": ["bidding_strategy_type", "target_cpa", "target_roas"],
+    "ttl_days": 14
+  },
+  "kpi_target": "cpa_down",
+  "reversibility": 0.7,
+  "effort": 0.5,
+  "risk": 0.7,
+  "api_mapping": {
+    "resource": "Campaign",
+    "operation": "mutate",
+    "fields": ["bidding_strategy_type", "target_cpa_micros", "target_roas"]
+  },
+  "cooldown_days": 7,
+  "conflicts_with": ["bidding.target_adjust"],
+  "can_batch": false,
+  "eval": {
+    "window_days": 14,
+    "lag_days": 7,
+    "metrics": ["delta_roas", "delta_cpa"],
+    "success_rules": ["delta_roas >= 0.08", "or", "delta_cpa <= -0.10"],
+    "min_sample": "clicks_7d >= 120"
+  },
+  "version": "1.0.0"
+}
