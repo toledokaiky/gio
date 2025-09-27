@@ -1,0 +1,28 @@
+
+VERSÃO - CAMPANHA | MUDANÇA DE ESTRÁTEGIA
+
+{
+  "schema_version": "1.0",
+  "captured_at": "2025-08-30T13:41:39Z",
+  "resource": "customers/xxx/campaigns/yyy",
+  "entity_type": "campaign",
+  "account_id": "1234567890",
+  "captured_fields": {
+    "bidding_strategy_type": "TARGET_ROAS",
+    "target_cpa": null,
+    "target_roas": 3.20,
+    "target_cpa_micros": null,            // opcional
+    "target_roas_raw": 3.2,               // opcional
+    "budget_amount": 100.00               // se a ação também mexer em budget
+  },
+
+  "mutated_fields": ["target_roas"],      // quais campos ESTA ação alterou
+  "ttl_days": 14,
+  "expires_at": "2025-09-13T23:59:59Z",
+
+  "links": {
+    "decision_id": "…",                   // foreign key
+    "prev_execution_id": "…",             // encadeamento (opcional)
+    "notes": "bidding.target_adjust"
+  }
+}
